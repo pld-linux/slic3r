@@ -1,0 +1,40 @@
+diff --git a/xs/src/libslic3r/ClipperUtils.hpp b/xs/src/libslic3r/ClipperUtils.hpp
+index 2ab3ff7..2058f82 100644
+--- a/xs/src/libslic3r/ClipperUtils.hpp
++++ b/xs/src/libslic3r/ClipperUtils.hpp
+@@ -2,7 +2,7 @@
+ #define slic3r_ClipperUtils_hpp_
+ 
+ #include <myinit.h>
+-#include "clipper.hpp"
++#include <polyclipping/clipper.hpp>
+ #include "ExPolygon.hpp"
+ #include "Polygon.hpp"
+ #include "Surface.hpp"
+diff --git a/xs/src/libslic3r/Geometry.cpp b/xs/src/libslic3r/Geometry.cpp
+index 8e08336..606a8e7 100644
+--- a/xs/src/libslic3r/Geometry.cpp
++++ b/xs/src/libslic3r/Geometry.cpp
+@@ -1,7 +1,7 @@
+ #include "Geometry.hpp"
+ #include "Line.hpp"
+ #include "PolylineCollection.hpp"
+-#include "clipper.hpp"
++#include <polyclipping/clipper.hpp>
+ #include <algorithm>
+ #include <cmath>
+ #include <list>
+diff --git a/xs/xsp/Clipper.xsp b/xs/xsp/Clipper.xsp
+index 43a30a4..263c808 100644
+--- a/xs/xsp/Clipper.xsp
++++ b/xs/xsp/Clipper.xsp
+@@ -2,7 +2,7 @@
+ 
+ %{
+ #include <myinit.h>
+-#include "clipper.hpp"
++#include <polyclipping/clipper.hpp>
+ #include "libslic3r/ClipperUtils.hpp"
+ %}
+ 
+

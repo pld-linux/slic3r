@@ -1,0 +1,16 @@
+diff --git a/xs/Build.PL b/xs/Build.PL
+index 5a10ac0..18d0611 100644
+--- a/xs/Build.PL
++++ b/xs/Build.PL
+@@ -41,6 +41,11 @@ my $build = Module::Build::WithXSpp->new(
+         Module::Build::WithXSpp     0.13
+     )},
+     extra_compiler_flags => \@cflags,
++    extra_linker_flags => [qw(
++        -ladmesh
++        -lpoly2tri
++        -lpolyclipping
++    )],
+     
+     # Provides extra C typemaps that are auto-merged
+     extra_typemap_modules => {

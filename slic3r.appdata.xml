@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2013 Alessandro Ranellucci <alessandro@unterwelt.it> -->
+<application>
+ <id type="desktop">slic3r.desktop</id>
+ <licence>CC-BY</licence>
+ <summary>G-code generator for 3D printers</summary>
+ <description>
+  <p>Slic3r takes 3D models (STL, OBJ, AMF) and converts them into G-code instructions for 3D printers. It's compatible with any modern printer based on the RepRap toolchain, including all those based on the Marlin, Sprinter and Repetier firmware. It also works with Mach3 and LinuxCNC controllers.</p>
+  <p>Key features are:</p>
+  <ul>
+    <li>additional complete command-line interface to use it with no GUI</li>
+    <li>multi-material (multiple extruders) object printing</li>
+    <li>multiple G-code flavors supported (RepRap, Makerbot, Mach3 etc.)</li>
+    <li>ability to plate multiple objects having distinct print settings</li>
+    <li>multithread processing</li>
+    <li>STL auto-repair (tolerance for broken models)</li>
+  </ul>
+ </description>
+ <screenshots>
+  <screenshot type="default" width="1061" height="595">https://f.cloud.github.com/assets/2401856/1817033/e66d31a0-6f67-11e3-89d5-05c54cc6c8ab.png</screenshot>
+ </screenshots>
+ <url type="homepage">http://slic3r.org/</url>
+ <updatecontact>alessandro@unterwelt.it</updatecontact>
+</application>

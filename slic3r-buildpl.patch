@@ -1,0 +1,15 @@
+diff --git a/Build.PL b/Build.PL
+index 5c650ce..09febb4 100644
+--- a/Build.PL
++++ b/Build.PL
+@@ -146,7 +146,9 @@ if (@missing_prereqs) {
+     exit 1;
+ } elsif (!$gui) {
+     eval "use App::Prove; 1" or die "Failed to load App::Prove";
+-    my $res = App::Prove->new->run ? 0 : 1;
++    my $app = App::Prove->new;
++    $app->process_args('-Ixs/blib/lib','-Ixs/blib/arch');
++    my $res = $app->run ? 0 : 1;
+     if ($res == 0) {
+         print "If you also want to use the GUI you can now run `perl Build.PL --gui` to install the required modules.\n";
+     } else {
