@@ -1,6 +1,7 @@
 %bcond_without	tests
 %bcond_with	system_poly2tri
 #
+%include	/usr/lib/rpm/macros.perl
 Summary:	G-code generator for 3D printers (RepRap, Makerbot, Ultimaker etc.)
 Name:		slic3r
 Version:	1.2.7
@@ -25,6 +26,10 @@ Patch4:		%{name}-clear-error.patch
 Patch5:		%{name}-test-out-of-memory.patch
 Patch6:		%{name}-clipper.patch
 Patch7:		%{name}-admesh.patch
+BuildRequires:	ImageMagick
+BuildRequires:	admesh-devel >= 0.98.1
+BuildRequires:	boost-devel
+BuildRequires:	desktop-file-utils
 BuildRequires:	perl(Class::XSAccessor)
 BuildRequires:	perl(Encode::Locale)
 BuildRequires:	perl(ExtUtils::MakeMaker) >= 6.80
@@ -53,17 +58,11 @@ BuildRequires:	perl(Wx)
 BuildRequires:	perl(XML::SAX)
 BuildRequires:	perl(XML::SAX::ExpatXS)
 BuildRequires:	perl(parent)
-
-BuildRequires:	ImageMagick
-BuildRequires:	admesh-devel >= 0.98.1
-BuildRequires:	boost-devel
-BuildRequires:	desktop-file-utils
+BuildRequires:	perl-devel >= 1:5.8.0
 %{?with_system_poly2tri:BuildRequires:	poly2tri-devel}
 BuildRequires:	polyclipping-devel >= 6.2.0
-
+BuildRequires:	rpm-perlprov >= 4.1-13
 Requires:	admesh-libs >= 0.97.5
-Requires:	perl(:MODULE_COMPAT_%(eval "`perl -V:version`"; echo $version))
-Requires:	perl(XML::SAX)
 
 %description
 Slic3r is a G-code generator for 3D printers. It's compatible with
