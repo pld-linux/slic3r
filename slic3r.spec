@@ -1,15 +1,18 @@
+%bcond_without	tests
+%bcond_with	system_poly2tri
+#
 Summary:	G-code generator for 3D printers (RepRap, Makerbot, Ultimaker etc.)
 Name:		slic3r
-Version:	1.2.6
+Version:	1.2.7
 Release:	0.1
 License:	AGPLv3 and CC-BY
 # Images are CC-BY, code is AGPLv3
 Group:		Applications/Engineering
 URL:		http://slic3r.org/
 Source0:	https://github.com/alexrj/Slic3r/archive/%{version}.tar.gz
-# Source0-md5:	85c27cdc16c7efabfd6a34755b7881c9
-Source1:        %{name}.desktop
-Source2:        %{name}.appdata.xml
+# Source0-md5:	98abf1fafa1578259f1624f25a97e4bc
+Source1:	%{name}.desktop
+Source2:	%{name}.appdata.xml
 # Modify Build.PL so we are able to build this on Fedora
 Patch0:		%{name}-buildpl.patch
 # Don't warn for Perl >= 5.16
@@ -21,6 +24,7 @@ Patch3:		%{name}-linker.patch
 Patch4:		%{name}-clear-error.patch
 Patch5:		%{name}-test-out-of-memory.patch
 Patch6:		%{name}-clipper.patch
+Patch7:		%{name}-admesh.patch
 BuildRequires:	perl(Class::XSAccessor)
 BuildRequires:	perl(Encode::Locale)
 BuildRequires:	perl(ExtUtils::MakeMaker) >= 6.80
@@ -54,7 +58,7 @@ BuildRequires:	ImageMagick
 BuildRequires:	admesh-devel >= 0.98.1
 BuildRequires:	boost-devel
 BuildRequires:	desktop-file-utils
-BuildRequires:	poly2tri-devel
+%{?with_system_poly2tri:BuildRequires:	poly2tri-devel}
 BuildRequires:	polyclipping-devel >= 6.2.0
 
 Requires:	admesh-libs >= 0.97.5
@@ -73,7 +77,11 @@ more information.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%if %{with system_poly2tri}
 %patch3 -p1
+%else
+%patch7 -p1
+%endif
 #%patch4 -p1
 #%patch5 -p1
 %patch6 -p1
@@ -81,15 +89,22 @@ more information.
 # Remove bundled admesh, clipper, poly2tri and boost
 rm -rf xs/src/admesh
 rm xs/src/clipper.*pp
-rm -rf xs/src/poly2tri
+%{?with_system_poly2tri:rm -rf xs/src/poly2tri}
 rm -rf xs/src/boost
 
 %build
 cd xs
-perl ./Build.PL installdirs=vendor optimize="$RPM_OPT_FLAGS"
+%{__perl} ./Build.PL installdirs=vendor optimize="$RPM_OPT_FLAGS"
 ./Build
+cd ..
+
+%if %{with tests}
+cd xs
+./Build test verbose=1
 cd -
-# Building non XS part only runs test, so skip it and run it in tests
+SLIC3R_NO_AUTO=1 perl Build.PL installdirs=vendor
+# the --gui runs no tests, it only checks requires
+%endif
 
 # prepare pngs in mutliple sizes
 for res in 16 32 48 128 256; do
@@ -135,13 +150,6 @@ desktop-file-install --dir=$RPM_BUILD_ROOT%{_desktopdir} %{SOURCE1}
 cp %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/appdata/%{name}.appdata.xml
 
 %{_fixperms} $RPM_BUILD_ROOT*
-
-%check
-cd xs
-./Build test verbose=1
-cd -
-SLIC3R_NO_AUTO=1 perl Build.PL installdirs=vendor
-# the --gui runs no tests, it only checks requires
 
 %post
 /sbin/ldconfig

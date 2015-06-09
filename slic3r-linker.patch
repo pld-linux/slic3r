@@ -2,15 +2,26 @@ diff --git a/xs/Build.PL b/xs/Build.PL
 index 5a10ac0..18d0611 100644
 --- a/xs/Build.PL
 +++ b/xs/Build.PL
-@@ -41,6 +41,11 @@ my $build = Module::Build::WithXSpp->new(
+@@ -41,6 +41,10 @@ my $build = Module::Build::WithXSpp->new(
          Module::Build::WithXSpp     0.13
      )},
-     extra_compiler_flags => \@cflags,
+-    extra_compiler_flags => \@cflags,
++    extra_compiler_flags => [ @cflags, scalar `pkg-config --cflags poly2tri-c` ],
 +    extra_linker_flags => [qw(
 +        -ladmesh
-+        -lpoly2tri
 +        -lpolyclipping
-+    )],
++    ), `pkg-config --libs poly2tri-c`],
      
      # Provides extra C typemaps that are auto-merged
      extra_typemap_modules => {
+--- Slic3r-1.2.7/xs/src/libslic3r/ExPolygon.cpp~	2015-05-24 17:39:27.000000000 +0200
++++ Slic3r-1.2.7/xs/src/libslic3r/ExPolygon.cpp	2015-06-09 23:27:31.805045989 +0200
+@@ -5,7 +5,7 @@
+ #include "Line.hpp"
+ #include "ClipperUtils.hpp"
+ #include "polypartition.h"
+-#include "poly2tri/poly2tri.h"
++#include "poly2tri-c/p2t/poly2tri.h"
+ 
+ #include <algorithm>
+ #include <list>

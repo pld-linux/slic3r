@@ -1,0 +1,12 @@
+--- Slic3r-1.2.7/xs/Build.PL~	2015-05-24 17:39:27.000000000 +0200
++++ Slic3r-1.2.7/xs/Build.PL	2015-06-09 23:58:15.464105918 +0200
+@@ -41,6 +41,9 @@
+         Module::Build::WithXSpp     0.13
+     )},
+     extra_compiler_flags => \@cflags,
++    extra_linker_flags => [qw(
++        -ladmesh
++        -lpolyclipping)],
+     
+     # Provides extra C typemaps that are auto-merged
+     extra_typemap_modules => {
