@@ -31,17 +31,11 @@ BuildRequires:	admesh-devel >= 0.98.1
 BuildRequires:	boost-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	perl(Class::XSAccessor)
-BuildRequires:	perl(Encode::Locale)
 BuildRequires:	perl(ExtUtils::MakeMaker) >= 6.80
 BuildRequires:	perl(ExtUtils::ParseXS) >= 3.22
 BuildRequires:	perl(ExtUtils::Typemap)
 BuildRequires:	perl(ExtUtils::Typemaps::Default) >= 1.05
-BuildRequires:	perl(File::Basename)
-BuildRequires:	perl(File::Spec)
-BuildRequires:	perl(Getopt::Long)
 BuildRequires:	perl(Growl::GNTP) >= 0.15
-BuildRequires:	perl(IO::Scalar)
-BuildRequires:	perl(List::Util)
 BuildRequires:	perl(Math::ConvexHull) >= 1.0.4
 BuildRequires:	perl(Math::ConvexHull::MonotoneChain)
 BuildRequires:	perl(Math::Geometry::Voronoi) >= 1.3
@@ -49,20 +43,18 @@ BuildRequires:	perl(Math::PlanePath) >= 53
 BuildRequires:	perl(Module::Build::WithXSpp) >= 0.14
 BuildRequires:	perl(Moo) >= 1.003001
 BuildRequires:	perl(SVG)
-BuildRequires:	perl(Scalar::Util)
-BuildRequires:	perl(Storable)
-BuildRequires:	perl(Test::Harness)
-BuildRequires:	perl(Test::More)
-BuildRequires:	perl(Time::HiRes)
 BuildRequires:	perl(Wx)
-BuildRequires:	perl(XML::SAX)
 BuildRequires:	perl(XML::SAX::ExpatXS)
-BuildRequires:	perl(parent)
+BuildRequires:	perl-Encode-Locale
+BuildRequires:	perl-IO-stringy
+BuildRequires:	perl-XML-SAX
 BuildRequires:	perl-devel >= 1:5.8.0
+BuildRequires:	perl-modules
 %{?with_system_poly2tri:BuildRequires:	poly2tri-devel}
 BuildRequires:	polyclipping-devel >= 6.2.0
 BuildRequires:	rpm-perlprov >= 4.1-13
 Requires:	admesh-libs >= 0.97.5
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 Slic3r is a G-code generator for 3D printers. It's compatible with
