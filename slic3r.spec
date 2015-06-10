@@ -5,7 +5,7 @@
 Summary:	G-code generator for 3D printers (RepRap, Makerbot, Ultimaker etc.)
 Name:		slic3r
 Version:	1.2.8
-Release:	0.1
+Release:	1
 License:	AGPLv3 and CC-BY
 # Images are CC-BY, code is AGPLv3
 Group:		Applications/Engineering
@@ -32,18 +32,18 @@ BuildRequires:	boost-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	perl(ExtUtils::MakeMaker) >= 6.80
 BuildRequires:	perl(ExtUtils::ParseXS) >= 3.22
-BuildRequires:	perl(ExtUtils::Typemap)
 BuildRequires:	perl(ExtUtils::Typemaps::Default) >= 1.05
 BuildRequires:	perl(Growl::GNTP) >= 0.15
 BuildRequires:	perl(Math::ConvexHull) >= 1.0.4
-BuildRequires:	perl(Math::ConvexHull::MonotoneChain)
 BuildRequires:	perl(Math::Geometry::Voronoi) >= 1.3
 BuildRequires:	perl(Math::PlanePath) >= 53
 BuildRequires:	perl(Module::Build::WithXSpp) >= 0.14
 BuildRequires:	perl(Moo) >= 1.003001
 BuildRequires:	perl-Class-XSAccessor
 BuildRequires:	perl-Encode-Locale
+BuildRequires:	perl-ExtUtils-Typemap
 BuildRequires:	perl-IO-stringy
+BuildRequires:	perl-Math-ConvexHull-MonotoneChain
 BuildRequires:	perl-SVG
 BuildRequires:	perl-Wx
 BuildRequires:	perl-XML-SAX
@@ -54,6 +54,7 @@ BuildRequires:	perl-modules
 BuildRequires:	polyclipping-devel >= 6.2.0
 BuildRequires:	rpm-perlprov >= 4.1-13
 Requires:	admesh-libs >= 0.97.5
+Requires:	perl-threads >= 2.00
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -144,17 +145,13 @@ cp %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/appdata/%{name}.appdata.xml
 
 %post
 /sbin/ldconfig
-/bin/%update_icon_cache_post hicolor &>/dev/null || :
+%update_icon_cache hicolor
 
 %postun
 /sbin/ldconfig
 if [ $1 -eq 0 ] ; then
-    /bin/%update_icon_cache_post hicolor &>/dev/null
-    %{_bindir}/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+	%update_icon_cache hicolor
 fi
-
-%posttrans
-%{_bindir}/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %clean
 rm -rf $RPM_BUILD_ROOT
