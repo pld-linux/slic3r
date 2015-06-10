@@ -4,14 +4,14 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	G-code generator for 3D printers (RepRap, Makerbot, Ultimaker etc.)
 Name:		slic3r
-Version:	1.2.7
+Version:	1.2.8
 Release:	0.1
 License:	AGPLv3 and CC-BY
 # Images are CC-BY, code is AGPLv3
 Group:		Applications/Engineering
 URL:		http://slic3r.org/
 Source0:	https://github.com/alexrj/Slic3r/archive/%{version}.tar.gz
-# Source0-md5:	98abf1fafa1578259f1624f25a97e4bc
+# Source0-md5:	8b9902eb089d5ce59b25a2c9b711ec69
 Source1:	%{name}.desktop
 Source2:	%{name}.appdata.xml
 # Modify Build.PL so we are able to build this on Fedora
