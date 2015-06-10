@@ -30,7 +30,6 @@ BuildRequires:	ImageMagick
 BuildRequires:	admesh-devel >= 0.98.1
 BuildRequires:	boost-devel
 BuildRequires:	desktop-file-utils
-BuildRequires:	perl(Class::XSAccessor)
 BuildRequires:	perl(ExtUtils::MakeMaker) >= 6.80
 BuildRequires:	perl(ExtUtils::ParseXS) >= 3.22
 BuildRequires:	perl(ExtUtils::Typemap)
@@ -42,12 +41,13 @@ BuildRequires:	perl(Math::Geometry::Voronoi) >= 1.3
 BuildRequires:	perl(Math::PlanePath) >= 53
 BuildRequires:	perl(Module::Build::WithXSpp) >= 0.14
 BuildRequires:	perl(Moo) >= 1.003001
-BuildRequires:	perl(SVG)
-BuildRequires:	perl(Wx)
-BuildRequires:	perl(XML::SAX::ExpatXS)
+BuildRequires:	perl-Class-XSAccessor
 BuildRequires:	perl-Encode-Locale
 BuildRequires:	perl-IO-stringy
+BuildRequires:	perl-SVG
+BuildRequires:	perl-Wx
 BuildRequires:	perl-XML-SAX
+BuildRequires:	perl-XML-SAX-ExpatXS
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	perl-modules
 %{?with_system_poly2tri:BuildRequires:	poly2tri-devel}
