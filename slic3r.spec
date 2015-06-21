@@ -1,17 +1,28 @@
+#
 %bcond_without	tests
+# Don't turn on systems if test suite fails.
+# Test suite works fine with bundled libs, so the only way
+# to turn on system libs is to make sure test suite works
+# with them, too.
+%bcond_without	system_admesh
 %bcond_with	system_poly2tri
+%bcond_with	system_polyclipping
+#
+%define		admesh_ver		0.98.1
+%define		perl_encode_locale_ver	1.05
+%define		perl_threads_ver	2.00
 #
 %include	/usr/lib/rpm/macros.perl
 Summary:	G-code generator for 3D printers (RepRap, Makerbot, Ultimaker etc.)
 Name:		slic3r
-Version:	1.2.8
+Version:	1.2.9
 Release:	1
 License:	AGPLv3 and CC-BY
 # Images are CC-BY, code is AGPLv3
 Group:		Applications/Engineering
 URL:		http://slic3r.org/
 Source0:	https://github.com/alexrj/Slic3r/archive/%{version}.tar.gz
-# Source0-md5:	8b9902eb089d5ce59b25a2c9b711ec69
+# Source0-md5:	05ac7b137cbb7b12f442776e4c12dcc2
 Source1:	%{name}.desktop
 Source2:	%{name}.appdata.xml
 # Modify Build.PL so we are able to build this on Fedora
@@ -22,12 +33,9 @@ Patch0:		%{name}-buildpl.patch
 Patch1:		%{name}-nowarn-datadir.patch
 Patch2:		%{name}-english-locale.patch
 Patch3:		%{name}-linker.patch
-Patch4:		%{name}-clear-error.patch
-Patch5:		%{name}-test-out-of-memory.patch
-Patch6:		%{name}-clipper.patch
-Patch7:		%{name}-admesh.patch
+Patch4:		%{name}-clipper.patch
+Patch5:		%{name}-poly2tri-c.patch
 BuildRequires:	ImageMagick
-BuildRequires:	admesh-devel >= 0.98.1
 BuildRequires:	boost-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	perl(ExtUtils::MakeMaker) >= 6.80
@@ -40,7 +48,7 @@ BuildRequires:	perl(Math::PlanePath) >= 53
 BuildRequires:	perl(Module::Build::WithXSpp) >= 0.14
 BuildRequires:	perl(Moo) >= 1.003001
 BuildRequires:	perl-Class-XSAccessor
-BuildRequires:	perl-Encode-Locale
+BuildRequires:	perl-Encode-Locale >= %{perl_encode_locale_ver}
 BuildRequires:	perl-ExtUtils-Typemap
 BuildRequires:	perl-IO-stringy
 BuildRequires:	perl-Math-ConvexHull-MonotoneChain
@@ -50,11 +58,16 @@ BuildRequires:	perl-XML-SAX
 BuildRequires:	perl-XML-SAX-ExpatXS
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	perl-modules
+BuildRequires:	perl-threads >= %{perl_threads_ver}
 %{?with_system_poly2tri:BuildRequires:	poly2tri-devel}
-BuildRequires:	polyclipping-devel >= 6.2.0
+%{?with_system_polyclipping:BuildRequires:	polyclipping-devel >= 6.2.9}
 BuildRequires:	rpm-perlprov >= 4.1-13
-Requires:	admesh-libs >= 0.97.5
-Requires:	perl-threads >= 2.00
+%if %{with system_admesh}
+BuildRequires:	admesh-devel >= %{admesh_ver}
+Requires:	admesh-libs >= %{admesh_ver}
+%endif
+Requires:	perl-Encode-Locale >= %{perl_encode_locale_ver}
+Requires:	perl-threads >= %{perl_threads_ver}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -69,23 +82,21 @@ more information.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%if %{with system_poly2tri}
 %patch3 -p1
-%else
-%patch7 -p1
-%endif
-#%patch4 -p1
-#%patch5 -p1
-%patch6 -p1
+%{?with_system_polyclipping:%patch4 -p1}
+%{?with_system_poly2tri:%patch5 -p1}
 
 # Remove bundled admesh, clipper, poly2tri and boost
-rm -rf xs/src/admesh
-rm xs/src/clipper.*pp
-%{?with_system_poly2tri:rm -rf xs/src/poly2tri}
+%{?with_system_admesh:rm -rf xs/src/admesh}
+%{?with_system_polyclipping:rm xs/src/clipper.*pp}
+%{?with_system_poly2tri:rm -r xs/src/poly2tri}
 rm -rf xs/src/boost
 
 %build
 cd xs
+%{?with_system_admesh:SYSTEM_ADMESH=1} \
+%{?with_system_polyclipping:SYSTEM_POLYCLIPPING=1} \
+%{?with_system_poly2tri:SYSTEM_POLY2TRI=1} \
 %{__perl} ./Build.PL installdirs=vendor optimize="$RPM_OPT_FLAGS"
 ./Build
 cd ..
