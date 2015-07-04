@@ -1,4 +1,5 @@
 #
+# Conditional build:
 %bcond_without	tests
 # Don't turn on systems if test suite fails.
 # Test suite works fine with bundled libs, so the only way
@@ -14,13 +15,12 @@
 #
 %include	/usr/lib/rpm/macros.perl
 Summary:	G-code generator for 3D printers (RepRap, Makerbot, Ultimaker etc.)
+Summary(pl.UTF-8):	Generator G-code dla drukarek 3D (RepRap, Makerbot, Ultimaker itp.)
 Name:		slic3r
 Version:	1.2.9
 Release:	1
-License:	AGPLv3 and CC-BY
-# Images are CC-BY, code is AGPLv3
+License:	AGPL v3 (code), CC-BY (images)
 Group:		Applications/Engineering
-URL:		http://slic3r.org/
 Source0:	https://github.com/alexrj/Slic3r/archive/%{version}.tar.gz
 # Source0-md5:	05ac7b137cbb7b12f442776e4c12dcc2
 Source1:	%{name}.desktop
@@ -35,6 +35,7 @@ Patch2:		%{name}-english-locale.patch
 Patch3:		%{name}-linker.patch
 Patch4:		%{name}-clipper.patch
 Patch5:		%{name}-poly2tri-c.patch
+URL:		http://slic3r.org/
 BuildRequires:	ImageMagick
 BuildRequires:	boost-devel
 BuildRequires:	desktop-file-utils
@@ -59,7 +60,7 @@ BuildRequires:	perl-XML-SAX-ExpatXS
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	perl-modules
 BuildRequires:	perl-threads >= %{perl_threads_ver}
-%{?with_system_poly2tri:BuildRequires:	poly2tri-devel}
+%{?with_system_poly2tri:BuildRequires:	poly2tri-c-devel}
 %{?with_system_polyclipping:BuildRequires:	polyclipping-devel >= 6.2.9}
 BuildRequires:	rpm-perlprov >= 4.1-13
 %if %{with system_admesh}
@@ -73,8 +74,14 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 Slic3r is a G-code generator for 3D printers. It's compatible with
 RepRaps, Makerbots, Ultimakers and many more machines. See the project
-homepage at slic3r.org and the documentation on the Slic3r wiki for
-more information.
+homepage at http://slic3r.org/ and the documentation on the Slic3r
+wiki for more information.
+
+%description -l pl.UTF-8
+Slic3r to generator G-code dla drukarek 3D. Jest zgodny z urządzeniami
+RepRap, Makerbot, Ultimaker i wieloma innymi. Więcej informacji można
+znaleźć na stronie projektu http://slic3r.org/ oraz na wiki projektu
+Slic3r.
 
 %prep
 %setup -qn Slic3r-%{version}
@@ -87,17 +94,19 @@ more information.
 %{?with_system_poly2tri:%patch5 -p1}
 
 # Remove bundled admesh, clipper, poly2tri and boost
-%{?with_system_admesh:rm -rf xs/src/admesh}
-%{?with_system_polyclipping:rm xs/src/clipper.*pp}
-%{?with_system_poly2tri:rm -r xs/src/poly2tri}
-rm -rf xs/src/boost
+%{?with_system_admesh:%{__rm} -r xs/src/admesh}
+%{?with_system_polyclipping:%{__rm} xs/src/clipper.*pp}
+%{?with_system_poly2tri:%{__rm} -r xs/src/poly2tri}
+%{__rm} -r xs/src/boost
 
 %build
 cd xs
 %{?with_system_admesh:SYSTEM_ADMESH=1} \
 %{?with_system_polyclipping:SYSTEM_POLYCLIPPING=1} \
 %{?with_system_poly2tri:SYSTEM_POLY2TRI=1} \
-%{__perl} ./Build.PL installdirs=vendor optimize="$RPM_OPT_FLAGS"
+%{__perl} ./Build.PL \
+	installdirs=vendor \
+	optimize="%{rpmcflags}"
 ./Build
 cd ..
 
@@ -105,7 +114,9 @@ cd ..
 cd xs
 ./Build test verbose=1
 cd -
-SLIC3R_NO_AUTO=1 perl Build.PL installdirs=vendor
+SLIC3R_NO_AUTO=1 \
+%{__perl} Build.PL \
+	installdirs=vendor
 # the --gui runs no tests, it only checks requires
 %endif
 
@@ -154,18 +165,16 @@ cp %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/appdata/%{name}.appdata.xml
 
 %{_fixperms} $RPM_BUILD_ROOT*
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
-/sbin/ldconfig
 %update_icon_cache hicolor
 
 %postun
-/sbin/ldconfig
 if [ $1 -eq 0 ] ; then
 	%update_icon_cache hicolor
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
