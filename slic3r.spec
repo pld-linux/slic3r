@@ -6,7 +6,7 @@
 # to turn on system libs is to make sure test suite works
 # with them, too.
 %bcond_without	system_admesh
-%bcond_with	system_poly2tri
+%bcond_without	system_poly2tri
 %bcond_with	system_polyclipping
 #
 %define		admesh_ver		0.98.1
@@ -34,7 +34,6 @@ Patch1:		%{name}-nowarn-datadir.patch
 Patch2:		%{name}-english-locale.patch
 Patch3:		%{name}-linker.patch
 Patch4:		%{name}-clipper.patch
-Patch5:		%{name}-poly2tri-c.patch
 URL:		http://slic3r.org/
 BuildRequires:	ImageMagick
 BuildRequires:	boost-devel
@@ -60,7 +59,7 @@ BuildRequires:	perl-XML-SAX-ExpatXS
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	perl-modules
 BuildRequires:	perl-threads >= %{perl_threads_ver}
-%{?with_system_poly2tri:BuildRequires:	poly2tri-c-devel}
+%{?with_system_poly2tri:BuildRequires:	poly2tri-devel}
 %{?with_system_polyclipping:BuildRequires:	polyclipping-devel >= 6.2.9}
 BuildRequires:	rpm-perlprov >= 4.1-13
 %if %{with system_admesh}
@@ -91,7 +90,6 @@ Slic3r.
 %patch2 -p1
 %patch3 -p1
 %{?with_system_polyclipping:%patch4 -p1}
-%{?with_system_poly2tri:%patch5 -p1}
 
 # Remove bundled admesh, clipper, poly2tri and boost
 %{?with_system_admesh:%{__rm} -r xs/src/admesh}

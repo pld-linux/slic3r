@@ -13,8 +13,8 @@ diff -urN Slic3r-1.2.9.org/xs/Build.PL Slic3r-1.2.9/xs/Build.PL
 +    push @libs, qw(-polyclipping);
 +}
 +if ($ENV{SYSTEM_POLY2TRI}) {
-+    push @cflags, `pkg-config --cflags poly2tri-c`;
-+    push @libs, `pkg-config --libs poly2tri-c`;
++    push @cflags, qw(-I/usr/include/poly2tri);
++    push @libs, qw(-lpoly2tri);
 +}
 +
  if (ExtUtils::CppGuess->new->is_gcc) {
