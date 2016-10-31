@@ -1,0 +1,21 @@
+diff --git a/xs/src/libslic3r/Point.hpp b/xs/src/libslic3r/Point.hpp
+index f9850c7..9a52f3f 100644
+--- a/xs/src/libslic3r/Point.hpp
++++ b/xs/src/libslic3r/Point.hpp
+@@ -128,16 +128,6 @@ class Pointf3 : public Pointf
+ namespace boost { namespace polygon {
+     template <>
+     struct geometry_concept<coord_t> { typedef coordinate_concept type; };
+-    
+-    template <>
+-    struct coordinate_traits<coord_t> {
+-        typedef coord_t coordinate_type;
+-        typedef long double area_type;
+-        typedef long long manhattan_area_type;
+-        typedef unsigned long long unsigned_area_type;
+-        typedef long long coordinate_difference;
+-        typedef long double coordinate_distance;
+-    };
+ 
+     template <>
+     struct geometry_concept<Point> { typedef point_concept type; };
