@@ -18,7 +18,7 @@ Summary:	G-code generator for 3D printers (RepRap, Makerbot, Ultimaker etc.)
 Summary(pl.UTF-8):	Generator G-code dla drukarek 3D (RepRap, Makerbot, Ultimaker itp.)
 Name:		slic3r
 Version:	1.2.9
-Release:	4
+Release:	5
 License:	AGPL v3 (code), CC-BY (images)
 Group:		Applications/Engineering
 Source0:	https://github.com/alexrj/Slic3r/archive/%{version}.tar.gz
