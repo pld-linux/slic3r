@@ -1,0 +1,117 @@
+diff --git a/lib/Slic3r/GUI/3DScene.pm b/lib/Slic3r/GUI/3DScene.pm
+index 7628a6c..d37199b 100644
+--- a/lib/Slic3r/GUI/3DScene.pm
++++ b/lib/Slic3r/GUI/3DScene.pm
+@@ -1,9 +1,9 @@
+ package Slic3r::GUI::3DScene::Base;
+ use strict;
+ use warnings;
+-
+ use Wx::Event qw(EVT_PAINT EVT_SIZE EVT_ERASE_BACKGROUND EVT_IDLE EVT_MOUSEWHEEL EVT_MOUSE_EVENTS);
+ # must load OpenGL *before* Wx::GLCanvas
++
+ use OpenGL qw(:glconstants :glfunctions :glufunctions :gluconstants);
+ use base qw(Wx::GLCanvas Class::Accessor);
+ use Math::Trig qw(asin);
+@@ -48,6 +48,12 @@ use constant DEFAULT_COLOR  => [1,1,0];
+ use constant SELECTED_COLOR => [0,1,0,1];
+ use constant HOVER_COLOR    => [0.4,0.9,0,1];
+ 
++# Constant to determine if Vertex Buffer objects are used to draw
++# bed grid and the cut plane for object separation.
++# Old Perl (5.10.x) should set to 0.
++use constant HAS_VBO        => 1;
++
++
+ # make OpenGL::Array thread-safe
+ {
+     no warnings 'redefine';
+@@ -114,6 +120,7 @@ sub new {
+         $self->Refresh;
+     });
+     EVT_MOUSE_EVENTS($self, \&mouse_event);
++
+     
+     return $self;
+ }
+@@ -741,9 +748,19 @@ sub Render {
+         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+         
+         glEnableClientState(GL_VERTEX_ARRAY);
++        if (HAS_VBO) {
++            my ($triangle_vertex);
++            ($triangle_vertex) =
++                glGenBuffersARB_p(1);
++            $self->bed_triangles->bind($triangle_vertex);
++            glBufferDataARB_p(GL_ARRAY_BUFFER_ARB, $self->bed_triangles, GL_STATIC_DRAW_ARB);
++            glVertexPointer_c(3, GL_FLOAT, 0, 0);
++        } else {
++            # fall back on old behavior
++            glVertexPointer_p(3, $self->bed_triangles);
++        }
+         glColor4f(0.8, 0.6, 0.5, 0.4);
+         glNormal3d(0,0,1);
+-        glVertexPointer_p(3, $self->bed_triangles);
+         glDrawArrays(GL_TRIANGLES, 0, $self->bed_triangles->elements / 3);
+         glDisableClientState(GL_VERTEX_ARRAY);
+         
+@@ -753,13 +770,29 @@ sub Render {
+     
+         # draw grid
+         glLineWidth(3);
+-        glColor4f(0.2, 0.2, 0.2, 0.4);
+         glEnableClientState(GL_VERTEX_ARRAY);
+-        glVertexPointer_p(3, $self->bed_grid_lines);
++        if (HAS_VBO) {
++            my ($grid_vertex);
++            ($grid_vertex) =
++                glGenBuffersARB_p(1);
++            $self->bed_grid_lines->bind($grid_vertex);
++            glBufferDataARB_p(GL_ARRAY_BUFFER_ARB, $self->bed_grid_lines, GL_STATIC_DRAW_ARB);
++            glVertexPointer_c(3, GL_FLOAT, 0, 0);
++        } else {
++            # fall back on old behavior
++            glVertexPointer_p(3, $self->bed_grid_lines);
++        }
++        glColor4f(0.2, 0.2, 0.2, 0.4);
++        glNormal3d(0,0,1);
+         glDrawArrays(GL_LINES, 0, $self->bed_grid_lines->elements / 3);
+         glDisableClientState(GL_VERTEX_ARRAY);
+         
+         glDisable(GL_BLEND);
++        if (HAS_VBO) { 
++            # Turn off buffer objects to let the rest of the draw code work.
++            glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
++            glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
++        }
+     }
+     
+     my $volumes_bb = $self->volumes_bounding_box;
+@@ -899,10 +932,26 @@ sub draw_volumes {
+     glDisable(GL_BLEND);
+     
+     if (defined $self->cutting_plane_z) {
++        if (HAS_VBO) {
++            # Use Vertex Buffer Object for cutting plane (previous method crashes on modern POGL). 
++            my ($cut_vertex) = glGenBuffersARB_p(1);
++            $self->cut_lines_vertices->bind($cut_vertex);
++            glBufferDataARB_p(GL_ARRAY_BUFFER_ARB, $self->cut_lines_vertices, GL_STATIC_DRAW_ARB);
++            glVertexPointer_c(3, GL_FLOAT, 0, 0);
++        } else {
++            # Use legacy method.
++            glVertexPointer_p(3, $self->cut_lines_vertices);
++        }
+         glLineWidth(2);
+         glColor3f(0, 0, 0);
+-        glVertexPointer_p(3, $self->cut_lines_vertices);
+         glDrawArrays(GL_LINES, 0, $self->cut_lines_vertices->elements / 3);
++
++        if (HAS_VBO) { 
++            # Turn off buffer objects to let the rest of the draw code work.
++            glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
++            glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
++        }
++
+     }
+     glDisableClientState(GL_VERTEX_ARRAY);
+ }

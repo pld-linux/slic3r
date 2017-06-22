@@ -18,7 +18,7 @@ Summary:	G-code generator for 3D printers (RepRap, Makerbot, Ultimaker etc.)
 Summary(pl.UTF-8):	Generator G-code dla drukarek 3D (RepRap, Makerbot, Ultimaker itp.)
 Name:		slic3r
 Version:	1.2.9
-Release:	6
+Release:	7
 License:	AGPL v3 (code), CC-BY (images)
 Group:		Applications/Engineering
 Source0:	https://github.com/alexrj/Slic3r/archive/%{version}.tar.gz
@@ -35,6 +35,9 @@ Patch2:		%{name}-english-locale.patch
 Patch3:		%{name}-linker.patch
 Patch4:		%{name}-clipper.patch
 Patch5:		boost-1.60.patch
+Patch6:		%{name}-boolcast.patch
+Patch7:		%{name}-opengl070.patch
+Patch8:		%{name}-wxclose.patch
 URL:		http://slic3r.org/
 BuildRequires:	ImageMagick
 BuildRequires:	boost-devel
@@ -92,6 +95,9 @@ Slic3r.
 %patch3 -p1
 %{?with_system_polyclipping:%patch4 -p1}
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 # Remove bundled admesh, clipper, poly2tri and boost
 %{?with_system_admesh:%{__rm} -r xs/src/admesh}
