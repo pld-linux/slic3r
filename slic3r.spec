@@ -13,7 +13,6 @@
 %define		perl_encode_locale_ver	1.05
 %define		perl_threads_ver	2.00
 #
-%include	/usr/lib/rpm/macros.perl
 Summary:	G-code generator for 3D printers (RepRap, Makerbot, Ultimaker etc.)
 Summary(pl.UTF-8):	Generator G-code dla drukarek 3D (RepRap, Makerbot, Ultimaker itp.)
 Name:		slic3r
