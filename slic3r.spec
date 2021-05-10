@@ -39,6 +39,7 @@ Patch7:		%{name}-opengl070.patch
 Patch8:		%{name}-wxclose.patch
 URL:		http://slic3r.org/
 BuildRequires:	ImageMagick
+BuildRequires:	ImageMagick-coder-png
 BuildRequires:	boost-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	perl(ExtUtils::XSpp::Cmd)
